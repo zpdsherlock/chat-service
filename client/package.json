@@ -1,0 +1,12 @@
+{
+  "name": "chat-proxy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "run": "node client.js"
+  },
+  "dependencies": {
+    "https": "^1.0.0"
+  }
+}
