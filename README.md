@@ -4,7 +4,6 @@
 ## OpenAI 流量代理服务部署
 ``` shell
 $ git clone -b shadowsocks-android https://github.com/zpdsherlock/go-gost.git
-$ cd go-gost/cmd/gost
 $ docker build -t zpdsherlock/gost .
 $ docker run -d --rm --name openai -p 9222:9222 zpdsherlock/gost -L "relay+tls://chacha20-ietf-poly1305:g8ysjOp0pU9KUYvYP%2Fjw6K@:9222"
 ```
