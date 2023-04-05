@@ -18,7 +18,6 @@ $ docker network create gost
 ### OpenAI 流量转发服务部署
 ``` shell
 $ git clone -b shadowsocks-android https://github.com/zpdsherlock/go-gost.git
-$ cd go-gost/cmd/gost
 $ docker build -t zpdsherlock/gost .
 $ docker run -d --rm --name gost --net gost -p 1080:1080 zpdsherlock/gost -L "auto://:1080" -F "relay+tls://chacha20-ietf-poly1305:g8ysjOp0pU9KUYvYP%2Fjw6K@${OVERSEA_VPS_IP}:9222"
 ```
