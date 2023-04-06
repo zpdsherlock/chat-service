@@ -11,7 +11,7 @@ const requestData = JSON.stringify({
   },
 });
 const options = {
-  hostname: 'localhost',
+  hostname: 'aigkzy.com',
   port: 9000,
   path: '/',
   method: 'POST',
@@ -19,15 +19,15 @@ const options = {
     'Content-Type': 'application/json',
     'Content-Length': requestData.length,
   },
-  // 将自签名证书添加到受信任的CA列表中
-  ca: fs.readFileSync('auth/chat-service-local.crt'),
 };
+console.time('openai');
 const req = https.request(options, (res) => {
   let responseData = '';
   res.on('data', (chunk) => {
     responseData += chunk.toString();
   });
   res.on('end', () => {
+    console.timeEnd('openai');
     // 获取 openai 回答结果
     console.log(responseData);
   });
