@@ -25,7 +25,7 @@ async function check_content(token, openid, content) {
   const body = {
     content: content,
     version: 2,
-    scene: 4,
+    scene: 3,
     openid: openid,
   };
   const data = JSON.stringify(body);
