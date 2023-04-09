@@ -1,21 +1,23 @@
 const http = require('http');
 const https = require('https');
 
-const { AtomicInteger } = require('atomic');
-
-let tag = new AtomicInteger(0);
+let tag = 0;
+let counter = 0;
+let perf_proxy = 0, perf_ttfb = 0, perf_openai = 0;
 
 // 通过 1080 代理端口发送 openai 的 POST 请求
 function requestCompletionsByOpenAI(openaiOfKey, postData) {
   const data = JSON.stringify(postData);
-  tag = tag.add(1);
-  const perf_tag = `p${tag.get()}`
+  tag += 1;
+  
+  const perf_tag = `p${tag}`;
+
   return new Promise((resolve, reject) => {
     const openaiHost = 'api.openai.com';
     const openaiPath = '/v1/chat/completions';
     console.time(`${perf_tag}_proxy`);
     const proxy = http.request({
-      host: 'gost',
+      host: '127.0.0.1',
       port: 1080,
       method: 'CONNECT',
       path: `${openaiHost}:443`,
@@ -36,10 +38,11 @@ function requestCompletionsByOpenAI(openaiOfKey, postData) {
               Authorization: `Bearer ${openaiOfKey}`,
               'OpenAI-Organization': 'org-hPpXuIQHoIqsn7VoKUpfnj9W',
               'Content-Type': 'application/json',
-              'Content-Length': data.length,
+              'Content-Length': Buffer.byteLength(data, 'UTF-8'),
             },
           },
           (res) => {
+            counter += 1;
             console.timeEnd(`${perf_tag}_ttfb`);
             let responseData = '';
             res.on('data', (chunk) => {
@@ -48,6 +51,7 @@ function requestCompletionsByOpenAI(openaiOfKey, postData) {
             res.on('end', () => {
               console.timeEnd(`${perf_tag}_openai`);
               resolve({ status: true, result: JSON.parse(responseData) });
+              console.log(`${counter}, ${perf_proxy}, ${perf_ttfb}, ${perf_openai}`);
             });
           }
         );
