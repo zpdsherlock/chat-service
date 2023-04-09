@@ -17,7 +17,7 @@ function requestCompletionsByOpenAI(openaiOfKey, postData) {
     const openaiPath = '/v1/chat/completions';
     console.time(`${perf_tag}_proxy`);
     const proxy = http.request({
-      host: '127.0.0.1',
+      host: 'gost',
       port: 1080,
       method: 'CONNECT',
       path: `${openaiHost}:443`,
