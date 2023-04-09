@@ -50,6 +50,7 @@ function requestCompletionsByOpenAI(openaiOfKey, postData) {
             });
             res.on('end', () => {
               console.timeEnd(`${perf_tag}_openai`);
+              console.log(responseData);
               resolve({ status: true, result: JSON.parse(responseData) });
               console.log(`${counter}, ${perf_proxy}, ${perf_ttfb}, ${perf_openai}`);
             });
