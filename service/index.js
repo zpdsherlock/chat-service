@@ -1,12 +1,16 @@
-const express = require('express');
-const https = require('https');
-const bodyParser = require('body-parser');
 const fs = require('fs');
+const https = require('https');
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const { AtomicInteger } = require('atomic');
 const { requestCompletionsByOpenAI } = require('./proxy');
 const { create, fetchModal, close } = require('./mongodb');
-const openaiKey = process.env.OPENAI_KEY;
 
-// chat-service-local 为 localtest 模式证书，上线需要使用 openssl 新建公域下的CA证书或自建证书
+const openaiKey = process.env.OPENAI_KEY;
+let request_success = new AtomicInteger(0);
+let request_failure = new AtomicInteger(0);
+
 const options = {
   key: fs.readFileSync('auth/chat-service-local.key'),
   cert: fs.readFileSync('auth/chat-service-local.crt'),
@@ -17,12 +21,19 @@ async function signal() {
 }
 
 async function handle(req, res) {
+  console.log(`Receive request`);
   const body = req.body;
   const user = await fetchModal('users', body.user);
-  console.log(JSON.stringify(user));
+  console.log(`User: ${JSON.stringify(user)}`);
   const openai = body.openai;
-  const response = await requestCompletionsByOpenAI(openaiKey, openai);
-  res.send(JSON.stringify(response.result));
+  requestCompletionsByOpenAI(openaiKey, openai).then((response) => {
+    request_success = request_success.add(1);
+    console.log(`Success Counts: ${request_success.get()}`);
+    res.send(JSON.stringify(response.result));
+  }).catch((response) => {
+    request_failure = request_failure.add(1);
+    console.log(`Failure Counts: ${request_success.get()}`);
+  });
 }
 
 async function main() {
