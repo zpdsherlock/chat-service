@@ -28,7 +28,7 @@ async function check_content(token, openid, content) {
     scene: 4,
     openid: openid,
   };
-  const data = JSON.stringify(content);
+  const data = JSON.stringify(body);
   return new Promise((resolve, reject) => {
     const client = https.request(
       {
@@ -46,6 +46,7 @@ async function check_content(token, openid, content) {
           responseData += chunk.toString();
         });
         res.on('end', () => {
+          console.log(responseData);
           const result = JSON.parse(responseData);
           resolve(result.result);
         });
