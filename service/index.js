@@ -60,42 +60,44 @@ async function handle(req, res) {
   const body = req.body;
   const token = body.user.token;
   const openid = body.user.openid;
-  const user = await fetchModal('users', body.user);
-  console.log(`User: ${JSON.stringify(user)}`);
-  const auther = await check_content(
-    token,
-    openid,
-    JSON.stringify(body.openai)
-  );
-  if (auther.suggest === 'pass') {
-    const openai = body.openai;
-    requestCompletionsByOpenAI(openaiKey, openai)
-      .then((response) => {
-        request_success += 1;
-        console.log(`Success Counts: ${request_success}`);
-        res.send(JSON.stringify(response.result));
-      })
-      .catch((response) => {
-        request_failure += 1;
-        console.log(`Failure Counts: ${request_failure}`);
-      });
-  } else {
-    request_success += 1;
-    console.log(`Success Counts: ${request_success}`);
-    res.send(
-      JSON.stringify({
-        msg_sec_check: true,
-        choices: [
-          {
-            message: {
-              role: 'assistant',
-              content: '不好意思,这个问题不方便回答,请谅解!',
-            },
-          },
-        ],
-      })
+  if (token && openid) {
+    const user = await fetchModal('users', body.user);
+    console.log(`User: ${JSON.stringify(user)}`);
+    const auther = await check_content(
+      token,
+      openid,
+      JSON.stringify(body.openai)
     );
+    if (auther.suggest === 'pass') {
+      const openai = body.openai;
+      requestCompletionsByOpenAI(openaiKey, openai)
+        .then((response) => {
+          request_success += 1;
+          console.log(`Success Counts: ${request_success}`);
+          res.send(JSON.stringify(response.result));
+        })
+        .catch((response) => {
+          request_failure += 1;
+          console.log(`Failure Counts: ${request_failure}`);
+        });
+      return;
+    }
   }
+  request_success += 1;
+  console.log(`Success Counts: ${request_success}`);
+  res.send(
+    JSON.stringify({
+      msg_sec_check: true,
+      choices: [
+        {
+          message: {
+            role: 'assistant',
+            content: '不好意思,这个问题不方便回答,请谅解!',
+          },
+        },
+      ],
+    })
+  );
 }
 
 async function main() {
