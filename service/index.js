@@ -34,6 +34,7 @@ async function check_content(token, openid, content) {
       {
         host: 'api.weixin.qq.com',
         path: `/wxa/msg_sec_check?access_token=${token}`,
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(data, 'UTF-8'),
@@ -68,7 +69,7 @@ async function handle(req, res) {
       openid,
       JSON.stringify(body.openai)
     );
-    if (auther.suggest === 'pass') {
+    if (auther && auther.suggest === 'pass') {
       const openai = body.openai;
       requestCompletionsByOpenAI(openaiKey, openai)
         .then((response) => {
