@@ -1,8 +1,11 @@
-const https = require('https');
 const fs = require('fs');
+const https = require('https');
+
 const requestData = JSON.stringify({
   user: {
     id: '001',
+    token: 'x',
+    openid: 'x',
   },
   openai: {
     model: 'gpt-3.5-turbo',
@@ -11,7 +14,7 @@ const requestData = JSON.stringify({
   },
 });
 const options = {
-  hostname: 'aigkzy.com',
+  hostname: 'localhost',
   port: 9000,
   path: '/',
   method: 'POST',
@@ -19,6 +22,7 @@ const options = {
     'Content-Type': 'application/json',
     'Content-Length': requestData.length,
   },
+  ca: fs.readFileSync('auth/chat-service-local.crt'),
 };
 console.time('openai');
 const req = https.request(options, (res) => {
