@@ -4,9 +4,7 @@ const OpenAIService = require('./openai-service');
 const { checkSecurity } = require('./security');
 const { fetchModal, updateModal } = require('./mongodb');
 
-const openaiKey =
-  process.env.OPENAI_KEY ||
-  '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';
+const openaiKey = process.env.OPENAI_KEY;
 
 const defaultResponse = {
   msg_sec_check: true,
