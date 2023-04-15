@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 const uri =
-  'mongodb://gost:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.0';
+  'mongodb://mongodb:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.0';
 const dbName = 'chatDB';
 
 function create() {
