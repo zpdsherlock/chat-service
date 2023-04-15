@@ -1,16 +1,16 @@
 const fs = require('fs');
 const https = require('https');
 
-const requestData = JSON.stringify({
+const postData = JSON.stringify({
   user: {
-    id: '001',
     token: 'x',
-    openid: 'x',
+    openid: '003',
   },
   openai: {
     model: 'gpt-3.5-turbo',
-    messages: [{ role: 'user', content: 'Say this is a test!' }],
+    messages: [{ role: 'user', content: '你好' }],
     temperature: 0.7,
+    stream: true,
   },
 });
 const options = {
@@ -20,23 +20,26 @@ const options = {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Content-Length': requestData.length,
+    'Content-Length': Buffer.byteLength(postData, 'UTF-8'),
   },
   ca: fs.readFileSync('auth/chat-service-local.crt'),
 };
+let ttfb = false;
+console.time('ttfb');
 console.time('openai');
 const req = https.request(options, (res) => {
-  let responseData = '';
   res.on('data', (chunk) => {
-    responseData += chunk.toString();
+    if (!ttfb) {
+      console.timeEnd('ttfb');
+      ttfb = true;
+    }
+    console.log(chunk.toString());
   });
   res.on('end', () => {
     console.timeEnd('openai');
-    // 获取 openai 回答结果
-    console.log(responseData);
   });
 });
 // 发送 openai 问题查询
-console.log(requestData);
-req.write(requestData);
+console.log(postData);
+req.write(postData);
 req.end();
