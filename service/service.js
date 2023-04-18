@@ -27,14 +27,13 @@ function handleOpenAI(requestUser, content, openai, piper) {
             .post(requestUser.path || '/v1/chat/completions', openai, piper)
             .then((response) => {
               resolve(response);
-            });
+            })
+            .catch(reject);
         } else {
-          reject();
+          reject(new Error(''));
         }
       })
-      .catch((error) => {
-        reject();
-      });
+      .catch(reject);
   });
 }
 
@@ -71,7 +70,7 @@ function handleService(client, req, res) {
           });
         })
           .then(() => {})
-          .catch(() => {
+          .catch((error) => {
             res.send(defaultResponse);
           });
       });
