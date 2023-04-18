@@ -23,7 +23,7 @@ function handleOpenAI(requestUser, content, openai, piper) {
     checkSecurity(requestUser.token, requestUser.openid, content)
       .then((checkResult) => {
         if (checkResult && checkResult.suggest === 'pass') {
-          new OpenAIService('127.0.0.1', 1080, openaiKey)
+          new OpenAIService('gost', 1080, openaiKey)
             .post(requestUser.path || '/v1/chat/completions', openai, piper)
             .then((response) => {
               resolve(response);
