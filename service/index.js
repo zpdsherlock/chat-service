@@ -29,6 +29,7 @@ function main() {
       try {
         handleService(client, req, res);        
       } catch (error) {
+        console.error(error);
         res.end();
       }
     });

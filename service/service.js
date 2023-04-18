@@ -45,7 +45,7 @@ function handleService(client, req, res) {
       const messages = body.openai.messages.filter((v) => v.role === 'user');
       const content = messages[messages.length - 1].content;
       let contents;
-      if (result.existing) {
+      if (result.existing && result.value.contents) {
         contents = result.value.contents.split('<###>');
         if (!content in contents) {
           contents.push(content);
@@ -71,9 +71,13 @@ function handleService(client, req, res) {
         })
           .then(() => {})
           .catch((error) => {
+            console.error(error);
             res.send(defaultResponse);
           });
       });
+    }).catch((error) => {
+      console.error(error);
+      res.send(defaultResponse);
     });
   } else {
     res.send(defaultResponse);
